@@ -1,8 +1,11 @@
 <template>
-  <v-container class="market-view">
+  <v-container class="market-view pb-4 mb-4">
     <v-progress-circular v-if="loading" color="primary" indeterminate/>
     <div v-else>
       <h1 class="mb-2">{{ market.name }}</h1>
+
+      <v-text-field type="search" prepend-inner-icon="search"/>
+
       <h3 class="mb-1">Recomendado para você</h3>
       <m-item v-model="items[i]" :key="i" v-for="(item, i) in items.slice(0, 3)"/>
 
@@ -16,6 +19,9 @@
         :to="{ name: 'route', params: { marketId, items: items.filter(item => item.count != 0) } }"
         color="primary"
         fab
+        fixed
+        right
+        bottom
         dark
       >
         <v-icon>check</v-icon>

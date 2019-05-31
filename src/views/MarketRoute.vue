@@ -3,6 +3,13 @@
     <h2 class="mb-1 mt-2">Caminho recomendado</h2>
     <canvas ref="map" class="map"/>
 
+    <v-layout row wrap mx-3 my-2>
+      <v-flex xs-4 mx-2 class="color-description" :key="i" v-for="(category, i) in Object.keys(categoryToColor)">
+        <div :style="`background-color: ${categoryToColor[category]}`" />
+        <span>{{ category }}</span>
+      </v-flex>
+    </v-layout>
+
     <v-card elevation=6 class="mt-3 mx-3">
       <div :key="i" v-for="(item, i) in items">
         <v-layout row class="item">
@@ -16,8 +23,12 @@
             {{ item.count }}
           </v-flex>
 
-          <v-btn @click="toggleItem(i)" round small :outline="!item.checked" :color="item.checked ? 'success' : ''" fab class="check-item">
+          <v-btn @click="toggleItemChecked(i)" round small :outline="!item.checked" :color="item.checked ? 'success' : ''" fab class="check-item">
             <v-icon>check</v-icon>
+          </v-btn>
+
+          <v-btn @click="toggleItemRejected(i)" round small :outline="!item.rejected" :color="item.rejected ? 'error' : ''" fab class="check-item">
+            <v-icon>close</v-icon>
           </v-btn>
         </v-layout>
         <v-divider/>
@@ -42,24 +53,25 @@ export default {
     completed: 0,
 
     categoryToColor: {
-      'bebidas': '#89a5d2',
-      'carnes': '#da6c6c',
-      'congelados': '#75d1a9',
-      'hortifruti': '#96e094',
-      'lacticinios': '#e1e774',
+      'Bebidas': '#89a5d2',
+      'Carnes': '#da6c6c',
+      'Congelados': '#75d1a9',
+      'Hortifruti': '#96e094',
+      'Lacticínios': '#e1e774',
+      'Higiene': '#c38bd6'
     },
 
     marketMap: [
-      ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
-      ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
-      ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
-      ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
-      ['bebidas', 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      ['bebidas', 0, 0, 0, 0, 0, 0, 0, 0, 0],
-      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 'congelados', 'congelados', 0],
-      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 'congelados', 'congelados', 0],
-      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 'congelados', 'congelados', 0],
-      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 0, 0, 0],
+      ['Bebidas', 0, 0, 'Lacticínios', 'Lacticínios', 0, 0, 'Carnes', 'Carnes', 0],
+      ['Bebidas', 0, 0, 'Lacticínios', 'Lacticínios', 0, 0, 'Carnes', 'Carnes', 0],
+      ['Bebidas', 0, 0, 'Lacticínios', 'Lacticínios', 0, 0, 'Carnes', 'Carnes', 0],
+      ['Bebidas', 0, 0, 'Lacticínios', 'Lacticínios', 0, 0, 'Carnes', 'Carnes', 0],
+      ['Bebidas', 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ['Bebidas', 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ['Bebidas', 0, 0, 'Hortifruti', 'Hortifruti', 0, 0, 'Congelados', 'Congelados', 0],
+      ['Bebidas', 0, 0, 'Hortifruti', 'Hortifruti', 0, 0, 'Congelados', 'Congelados', 0],
+      ['Bebidas', 0, 0, 'Hortifruti', 'Hortifruti', 0, 0, 'Higiene', 'Higiene', 0],
+      ['Bebidas', 0, 0, 'Hortifruti', 'Hortifruti', 0, 0, 'Higiene', 'Higiene', 0],
     ],
 
     route: [
@@ -83,8 +95,14 @@ export default {
     ]
   }),
   methods: {
-    toggleItem(i) {
+    toggleItemChecked(i) {
       this.items[i].checked = !this.items[i].checked
+      this.items[i].rejected = false
+      this.$forceUpdate()
+    },
+    toggleItemRejected(i) {
+      this.items[i].rejected = !this.items[i].rejected
+      this.items[i].checked = false
       this.$forceUpdate()
     },
     drawLine(x, y, type, percentage) {
@@ -162,7 +180,6 @@ export default {
     }
   },
   mounted() {
-    this.items.forEach(item => item.checked = false)
     this.map = this.$refs.map
     this.map.height = this.map.width = this.size * this.tileSize
 
@@ -196,6 +213,18 @@ export default {
   box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 6px 10px 0 rgba(0,0,0,.14),0 1px 18px 0 rgba(0,0,0,.12);
 }
 
+.color-description {
+  display: inline-flex;
+  align-items: center;
+  width: 33%;
+
+  & > div {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+  }
+}
+
 .item {
   align-items: center;
 
@@ -205,13 +234,13 @@ export default {
   }
 
   .v-btn--floating.v-btn--small.check-item {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
   }
 
   .item-counter {
     text-align: right;
-    margin-right: 10px;
+    margin-right: 14px;
   }
 }
 </style>
