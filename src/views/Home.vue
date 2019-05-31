@@ -31,7 +31,7 @@
                 <v-flex py-3>
                   <h3>{{ market.name }}</h3>
                   <v-img class="my-3" :src="market.asset"/>
-                  <v-btn outline round :to="{ name: 'market', params: { marketId: market.id, market } }" color="success">
+                  <v-btn outline round :to="{ name: 'market', params: { marketId: market.id } }" color="success">
                     Acessar
                   </v-btn>
                 </v-flex>

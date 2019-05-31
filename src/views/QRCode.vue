@@ -4,10 +4,10 @@
       <v-card elevation=4 class="my-2" :key="i" v-for="(item, i) in items">
         <v-layout row pa-2 px-3 class="item">
           <v-avatar class="mr-2">
-            <v-img :src="item.image"/>
+            <v-img :src="item.asset"/>
           </v-avatar>
 
-          <h3>{{ item.name }}</h3>
+          <h3>{{ item.id }}</h3>
 
           <span>{{ item.count }}</span>
 
@@ -29,22 +29,24 @@
 import { setTimeout } from 'timers';
 export default {
   name: 'qrcode',
+  props: {
+    selectedProducts: Array
+  },
   data: () => ({
     finished: false,
     items: []
   }),
   created() {
-    for (let i = 1; i < 4; i++)
+    this.selectedProducts.forEach((item, i) => {
       setTimeout(() => {
-        this.items.push({
-          image: '../assets/logo.png',
-          name: 'Fralda',
-          count: 2,
-          price: 1000
-        })
-      }, i * 2000)
+        let product = { ...item }
+        if (!product.count) product.count = 1
 
-    setTimeout(() => this.finished = true, 2000 * 5)
+        this.items.push(product)
+      }, (i + 1) * 2000)
+    })
+    
+    setTimeout(() => this.finished = true, this.selectedProducts.length * 2500)
   }
 }
 </script>

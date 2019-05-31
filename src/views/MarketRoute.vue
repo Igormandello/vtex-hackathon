@@ -38,7 +38,12 @@
     <v-fab-transition>
       <v-btn
         v-show="!items.some(item => !item.checked && !item.rejected)"
-        :to="{ name: 'qrcode' }"
+        :to="{ 
+          name: 'qrcode',
+          params: { 
+            selectedProducts: items.filter(item => item.checked).concat(allProducts.filter(item => item.id == 'Cerveja')) 
+          }
+        }"
         color="primary"
         fab
         fixed
@@ -58,7 +63,8 @@ import { setInterval, clearInterval } from 'timers';
 export default {
   name: 'marketRoute',
   props: {
-    items: Array
+    items: Array,
+    allProducts: Array
   },
   data: () => ({
     map: null,

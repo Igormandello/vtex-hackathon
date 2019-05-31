@@ -1,5 +1,5 @@
 <template>
-  <v-toolbar dark flat color="primary">
+  <v-toolbar dark :flat="$route.name == 'home'" color="primary">
     <router-link :to="{ name: 'home' }">
       <v-avatar>
         <img :src="require('../assets/logo.png')"/>

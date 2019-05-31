@@ -46,7 +46,12 @@
                 <v-fab-transition>
                   <v-btn
                     v-show="data.allProducts.some(item => item.count > 0)"
-                    :to="{ name: 'route', params: { marketId, items: data.allProducts.filter(item => item.count != 0) } }"
+                    :to="{ name: 'route', params: { 
+                        marketId,
+                        items: data.allProducts.filter(item => item.count != 0),
+                        allProducts: data.allProducts 
+                      } 
+                    }"
                     color="primary"
                     fab
                     fixed
@@ -73,35 +78,8 @@ import gql from 'graphql-tag'
 export default {
   name: 'market',
   props: {
-    marketId: String,
-    market: Object
+    marketId: String
   },
-  data: () => ({
-    items: [
-      { 
-        image: '../assets/logo.png',
-        name: 'Farofa',
-        count: 0
-      }, { 
-        image: '../assets/logo.png',
-        name: 'Cerveja',
-        count: 0
-      }, { 
-        image: '../assets/logo.png',
-        name: 'Fralda',
-        count: 0
-      }, { 
-        image: '../assets/logo.png',
-        name: 'Água',
-        count: 0
-      }, { 
-        image: '../assets/logo.png',
-        name: 'Refrigerante',
-        count: 0
-      }
-    ],
-    loading: false
-  }),
   apollo: {
     allMarkets: gql`{
       allMarkets {
@@ -110,10 +88,6 @@ export default {
         asset
       }
     }`,
-  },
-  created() {
-    this.loading = true
-    this.loading = false
   }
 }
 </script>
