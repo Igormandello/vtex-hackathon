@@ -26,7 +26,7 @@
         <h2>Log In</h2>
         <v-layout wrap>
           <v-flex xs12>
-            <v-text-field label="Email" type="email" required></v-text-field>
+            <v-text-field label="Username" required></v-text-field>
           </v-flex>
           <v-flex xs12>
             <v-text-field label="Password" type="password" required></v-text-field>
@@ -35,7 +35,7 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn flat round @click="loginForm = false">Close</v-btn>
-          <v-btn outline round color="primary" flat @click="executeLogin">Login</v-btn>
+          <v-btn outline round color="primary" flat :loading="logging" @click="executeLogin">Login</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -48,15 +48,20 @@ import { mapActions } from 'vuex'
 export default {
   name: 'm-header',
   data: () => ({
-    loginForm: false
+    loginForm: false,
+    logging: false
   }),
   methods: {
     ...mapActions([
       'login'
     ]),
-
     async executeLogin() {
-      this.login('Igor Mandello')
+      this.logging = true
+      await new Promise(resolve => setTimeout(resolve, 750))
+      this.login('Barack Obama')
+
+      this.logging = false
+      this.loginForm = false
     }
   },
   computed: {

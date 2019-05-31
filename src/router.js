@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Market from './views/Market.vue'
 import MarketRoute from './views/MarketRoute.vue'
+import QRCode from './views/QRCode.vue'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
       name: 'route',
       props: getParams,
       component: MarketRoute
+    }, {
+      path: '/market/:marketId/qrcode',
+      name: 'qrcode',
+      props: getParams,
+      component: QRCode
     }
   ]
 })

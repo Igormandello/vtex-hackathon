@@ -10,7 +10,7 @@
       </v-flex>
     </v-layout>
 
-    <v-card elevation=6 class="mt-3 mx-3">
+    <v-card elevation=6 class="mt-3 mx-3 mb-4">
       <div :key="i" v-for="(item, i) in items">
         <v-layout row class="item">
           <v-avatar class="mr-2">
@@ -34,6 +34,21 @@
         <v-divider/>
       </div>
     </v-card>
+
+    <v-fab-transition>
+      <v-btn
+        v-show="!items.some(item => !item.checked && !item.rejected)"
+        :to="{ name: 'qrcode' }"
+        color="primary"
+        fab
+        fixed
+        right
+        bottom
+        dark
+      >
+        <v-icon>navigate_next</v-icon>
+      </v-btn>
+    </v-fab-transition>
   </v-container>
 </template>
 
