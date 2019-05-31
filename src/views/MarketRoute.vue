@@ -12,7 +12,7 @@
 
           <h3>{{ item.name }}</h3>
 
-          <v-flex>
+          <v-flex class="item-counter">
             {{ item.count }}
           </v-flex>
 
@@ -28,94 +28,165 @@
 
 <script>
 import { isNumber } from 'util';
+import { setInterval, clearInterval } from 'timers';
 export default {
   name: 'marketRoute',
   props: {
     items: Array
   },
-  methods: {
-    toggleItem(i) {
-      this.items[i].checked = !this.items[i].checked
-      this.$forceUpdate()
-    }
-  },
-  mounted() {
-    this.items.forEach(item => item.checked = false)
+  data: () => ({
+    map: null,
+    size: 10,
+    tileSize: 32,
+    ctx: null,
+    completed: 0,
 
-    let map = this.$refs.map
-
-    let size = 10
-    let tileSize = 32
-
-    map.height = map.width = size * tileSize
-
-    let ctx = map.getContext('2d')
-
-    let categoryToColor = {
+    categoryToColor: {
       'bebidas': '#89a5d2',
       'carnes': '#da6c6c',
       'congelados': '#75d1a9',
       'hortifruti': '#96e094',
       'lacticinios': '#e1e774',
-    }
+    },
 
-    let marketMap = [
+    marketMap: [
       ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
       ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
       ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
-      ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 3, 6, 'carnes', 'carnes', 0],
-      ['bebidas', 0, 0, 0, 0, 2, 2, 0, 0, 0],
-      ['bebidas', 0, 3, 4, 4, 5, 2, 0, 0, 0],
-      ['bebidas', 0, 2, 'hortifruti', 'hortifruti', 0, 2, 'congelados', 'congelados', 0],
-      ['bebidas', 0, 2, 'hortifruti', 'hortifruti', 0, 2, 'congelados', 'congelados', 0],
-      ['bebidas', 0, 2, 'hortifruti', 'hortifruti', 0, 2, 'congelados', 'congelados', 0],
-      ['bebidas', 0, 2, 'hortifruti', 'hortifruti', 0, 2, 0, 0, 0],
+      ['bebidas', 0, 0, 'lacticinios', 'lacticinios', 0, 0, 'carnes', 'carnes', 0],
+      ['bebidas', 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ['bebidas', 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 'congelados', 'congelados', 0],
+      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 'congelados', 'congelados', 0],
+      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 'congelados', 'congelados', 0],
+      ['bebidas', 0, 0, 'hortifruti', 'hortifruti', 0, 0, 0, 0, 0],
+    ],
+
+    route: [
+      { x: 2, y: 9, type: 'UP' },
+      { x: 2, y: 8, type: 'UP' },
+      { x: 2, y: 7, type: 'UP' },
+      { x: 2, y: 6, type: 'UP' },
+      { x: 2, y: 5, type: 'UP_RIGHT' },
+      { x: 3, y: 5, type: 'RIGHT' },
+      { x: 4, y: 5, type: 'RIGHT' },
+      { x: 5, y: 5, type: 'RIGHT_UP' },
+      { x: 5, y: 4, type: 'UP' },
+      { x: 5, y: 3, type: 'UP_RIGHT' },
+      { x: 6, y: 3, type: 'RIGHT_DOWN' },
+      { x: 6, y: 4, type: 'DOWN' },
+      { x: 6, y: 5, type: 'DOWN' },
+      { x: 6, y: 6, type: 'DOWN' },
+      { x: 6, y: 7, type: 'DOWN' },
+      { x: 6, y: 8, type: 'DOWN' },
+      { x: 6, y: 9, type: 'DOWN' }
     ]
+  }),
+  methods: {
+    toggleItem(i) {
+      this.items[i].checked = !this.items[i].checked
+      this.$forceUpdate()
+    },
+    drawLine(x, y, type, percentage) {
+      let tileX = x * this.tileSize
+      let tileY = y * this.tileSize
 
-    ctx.strokeWidth = 2
-    ctx.strokeStyle = '#000'
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
-        let tile = marketMap[y][x]
+      let centerX = tileX + this.tileSize / 2 + 2
+      let centerY = tileY + this.tileSize / 2 + 2
 
-        if (!isNumber(tile)) {
-          ctx.fillStyle = categoryToColor[tile]
+      this.ctx.beginPath()
+      if (type === 'UP') {
+        this.ctx.moveTo(centerX, tileY + this.tileSize - this.tileSize * percentage)
+        this.ctx.lineTo(centerX, tileY + this.tileSize)
+      } else if (type === 'RIGHT') {
+        this.ctx.moveTo(tileX, centerY)
+        this.ctx.lineTo(tileX + this.tileSize * percentage, centerY)
+      } else if (type === 'DOWN') {
+        this.ctx.moveTo(centerX, tileY)
+        this.ctx.lineTo(centerX, tileY + this.tileSize * percentage)
+      } else if (type === 'UP_RIGHT') {
+        this.ctx.moveTo(centerX, tileY + this.tileSize)
+
+        if (percentage <= 0.5) {
+          this.ctx.lineTo(centerX, tileY + this.tileSize - this.tileSize * percentage)
         } else {
-          ctx.fillStyle = '#666'
+          this.ctx.lineTo(centerX, centerY)
+          this.ctx.lineTo(tileX + this.tileSize * percentage, centerY)
         }
+      } else if (type === 'RIGHT_UP') {
+        this.ctx.moveTo(tileX, centerY)
 
-        let tileX = x * tileSize
-        let tileY = y * tileSize
-        ctx.fillRect(tileX, tileY, tileSize, tileSize)
+        if (percentage <= 0.5) {
+          this.ctx.lineTo(tileX + this.tileSize * percentage, centerY)
+        } else {
+          this.ctx.lineTo(centerX, centerY)
+          this.ctx.lineTo(centerX, tileY + this.tileSize - this.tileSize * percentage)
+        }
+      } else if (type === 'DOWM_RIGHT') {
+        this.ctx.moveTo(centerX, tileY + this.tileSize)
 
-        if (isNumber(tile) && tile != 0) {
-          let centerX = tileX + tileSize / 2 + 1
-          let centerY = tileY + tileSize / 2 + 1
+        if (percentage <= 0.5) {
+          this.ctx.lineTo(centerX, tileY + this.tileSize - this.tileSize * percentage)
+        } else {
+          this.ctx.lineTo(centerX, centerY)
+          this.ctx.lineTo(centerX, tileY + this.tileSize - this.tileSize * percentage)
+        }
+      } else if (type === 'RIGHT_DOWN') {
+        this.ctx.moveTo(tileX, centerY)
 
-          ctx.beginPath()
-          if (tile == 2) {
-            ctx.moveTo(centerX, tileY)
-            ctx.lineTo(centerX, tileY + tileSize)
-          } else if (tile == 3) {
-            ctx.moveTo(centerX, tileY + tileSize)
-            ctx.lineTo(centerX, centerY)
-            ctx.lineTo(tileX + tileSize, centerY)
-          } else if (tile == 4) {
-            ctx.moveTo(tileX, centerY)
-            ctx.lineTo(tileX + tileSize, centerY)
-          } else if (tile == 5) {
-            ctx.moveTo(tileX, centerY)
-            ctx.lineTo(centerX, centerY)
-            ctx.lineTo(centerX, tileY)
-          } else if (tile == 6) {
-            ctx.moveTo(tileX, centerY)
-            ctx.lineTo(centerX, centerY)
-            ctx.lineTo(centerX, tileY + tileSize)
+        if (percentage <= 0.5) {
+          this.ctx.lineTo(tileX + this.tileSize * percentage, centerY)
+        } else {
+          this.ctx.lineTo(centerX, centerY)
+          this.ctx.lineTo(centerX, tileY + this.tileSize * percentage)
+        }
+      }
+      this.ctx.stroke()
+    },
+    drawMap() {
+      for (let y = 0; y < this.size; y++) {
+        for (let x = 0; x < this.size; x++) {
+          let tile = this.marketMap[y][x]
+
+          if (!isNumber(tile)) {
+            this.ctx.fillStyle = this.categoryToColor[tile]
+          } else {
+            this.ctx.fillStyle = '#666'
           }
-          ctx.stroke()
+
+          let tileX = x * this.tileSize
+          let tileY = y * this.tileSize
+          this.ctx.fillRect(tileX, tileY, this.tileSize, this.tileSize)
         }
       }
     }
+  },
+  mounted() {
+    this.items.forEach(item => item.checked = false)
+    this.map = this.$refs.map
+    this.map.height = this.map.width = this.size * this.tileSize
+
+    this.ctx = this.map.getContext('2d')
+    this.drawMap()
+
+    let framesPerTile = 12
+    this.ctx.lineWidth = 4
+    this.ctx.strokeStyle = '#000'
+    let interval = setInterval(() => {
+      this.drawMap()
+
+      let completionValue = 1 / this.route.length
+      this.completed += completionValue / framesPerTile
+
+      this.route.forEach((route, i) => {
+        let lastCompletion = i * completionValue
+        if (this.completed > lastCompletion)
+          this.drawLine(route.x, route.y, route.type, Math.min((this.completed - lastCompletion) / completionValue, 1))
+      })
+
+      if (this.completed >= 1)
+        clearInterval(interval)
+    }, 16)
   }
 }
 </script>
@@ -139,16 +210,8 @@ export default {
   }
 
   .item-counter {
-    width: 75px;
-    flex-grow: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-
-    span {
-      margin: 0 4px;
-      font-size: 1.4rem;
-    }
+    text-align: right;
+    margin-right: 10px;
   }
 }
 </style>

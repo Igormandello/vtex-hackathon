@@ -4,9 +4,9 @@
       <div class="background"/>
       <v-container fill-height>
         <v-flex>
-          <h1>
-            <p>Suas compras</p>
-            <p>num piscar de olhos.</p>
+          <h1 class="mx-3">
+            Suas compras</br>
+            num piscar de olhos.
           </h1>
         </v-flex>
       </v-container>
@@ -14,7 +14,7 @@
     <v-container class="markets">
       <h2>Mercados por perto</h2>
       <v-layout column>
-        <v-flex xs-4 ma-4 :key="i" v-for="i in [1, 2, 3]">
+        <v-flex xs-4 ma-4 :key="i" v-for="(market, i) in [1, 2, 3]">
           <v-card elevation=6>
             <v-flex py-3>
               <h3>Mercado {{ i }}</h3>

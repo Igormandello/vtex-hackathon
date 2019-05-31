@@ -7930,6 +7930,11 @@ thread-loader@^2.1.2:
     loader-utils "^1.1.0"
     neo-async "^2.6.0"
 
+throttle-debounce@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/throttle-debounce/-/throttle-debounce-2.1.0.tgz#257e648f0a56bd9e54fe0f132c4ab8611df4e1d5"
+  integrity sha512-AOvyNahXQuU7NN+VVvOOX+uW6FPaWdAOdRP5HfwYxAfCzXTFKRMoIMk+n+po318+ktcChx+F1Dd91G3YHeMKyg==
+
 through2@^2.0.0:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/through2/-/through2-2.0.5.tgz#01c1e39eb31d07cb7d03a96a70823260b23132cd"
@@ -8319,6 +8324,14 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
+
+vue-apollo@^3.0.0-beta.30:
+  version "3.0.0-beta.30"
+  resolved "https://registry.yarnpkg.com/vue-apollo/-/vue-apollo-3.0.0-beta.30.tgz#081bc2b8c8f9d2ffd508675c17dc1017da5ba3f4"
+  integrity sha512-uRv5JXGXCxMVyfThBtqeJVwHd7+XI/RmGjZY5kU6Ad8MGT6Da9M8T2wRmcvN4fa4fydRJuy4PheSEXS83WFUhg==
+  dependencies:
+    chalk "^2.4.2"
+    throttle-debounce "^2.1.0"
 
 vue-eslint-parser@^2.0.3:
   version "2.0.3"
