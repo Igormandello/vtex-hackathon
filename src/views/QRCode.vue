@@ -15,7 +15,7 @@
         </v-layout>
       </v-card>
 
-      <h2>Total: R${{ items.reduce((s, i) => s + i.price * i.count / 100, 0) }}</h2>
+      <h2>Total: R${{ items.reduce((s, i) => s + i.price * i.count / 100, 0).toFixed(2) }}</h2>
     </v-layout>
 
     <v-btn round outline color="primary" :to="{ name: 'home' }" class="mt-4" v-if="finished">
