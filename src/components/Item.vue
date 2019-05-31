@@ -2,10 +2,10 @@
   <v-card elevation=4 class="mb-3">
     <v-layout row class="pa-2 item">
       <v-avatar class="mr-2">
-        <v-img :src="value.image"/>
+        <v-img :src="value.asset"/>
       </v-avatar>
 
-      <h2>{{ value.name }}</h2>
+      <h2>{{ value.id }}</h2>
 
       <v-flex class="item-counter">
         <v-icon @click="value.count -= 1">remove</v-icon>
@@ -21,6 +21,12 @@ export default {
   name: 'm-item',
   props: {
     value: Object
+  },
+  created() {
+    this.$emit('input', {
+      ...this.value,
+      count: 0
+    })
   }
 }
 </script>

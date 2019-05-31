@@ -12,12 +12,12 @@
 
     <v-card elevation=6 class="mt-3 mx-3 mb-4">
       <div :key="i" v-for="(item, i) in items">
-        <v-layout row class="item">
+        <v-layout row class="item pa-2">
           <v-avatar class="mr-2">
-            <v-img :src="item.image"/>
+            <v-img :src="item.asset"/>
           </v-avatar>
 
-          <h3>{{ item.name }}</h3>
+          <h3>{{ item.id }}</h3>
 
           <v-flex class="item-counter">
             {{ item.count }}
@@ -97,16 +97,6 @@ export default {
       { x: 2, y: 5, type: 'UP_RIGHT' },
       { x: 3, y: 5, type: 'RIGHT' },
       { x: 4, y: 5, type: 'RIGHT' },
-      { x: 5, y: 5, type: 'RIGHT_UP' },
-      { x: 5, y: 4, type: 'UP' },
-      { x: 5, y: 3, type: 'UP_RIGHT' },
-      { x: 6, y: 3, type: 'RIGHT_DOWN' },
-      { x: 6, y: 4, type: 'DOWN' },
-      { x: 6, y: 5, type: 'DOWN' },
-      { x: 6, y: 6, type: 'DOWN' },
-      { x: 6, y: 7, type: 'DOWN' },
-      { x: 6, y: 8, type: 'DOWN' },
-      { x: 6, y: 9, type: 'DOWN' }
     ]
   }),
   methods: {
@@ -197,6 +187,29 @@ export default {
   mounted() {
     this.map = this.$refs.map
     this.map.height = this.map.width = this.size * this.tileSize
+
+    if (['Picanha', 'Leite'].every(item => this.items.find(it => it.id === item) != null)) {
+      this.route = this.route.concat([
+        { x: 5, y: 5, type: 'RIGHT_UP' },
+        { x: 5, y: 4, type: 'UP' },
+        { x: 5, y: 3, type: 'UP_RIGHT' },
+        { x: 6, y: 3, type: 'RIGHT_DOWN' },
+        { x: 6, y: 4, type: 'DOWN' },
+        { x: 6, y: 5, type: 'DOWN' }
+      ])
+    } else {
+      this.route = this.route.concat([
+        { x: 5, y: 5, type: 'RIGHT' },
+        { x: 6, y: 5, type: 'RIGHT_DOWN' }
+      ])
+    }
+
+    this.route = this.route.concat([
+        { x: 6, y: 6, type: 'DOWN' },
+        { x: 6, y: 7, type: 'DOWN' },
+        { x: 6, y: 8, type: 'DOWN' },
+        { x: 6, y: 9, type: 'DOWN' }
+      ])
 
     this.ctx = this.map.getContext('2d')
     this.drawMap()

@@ -1,8 +1,11 @@
 <template>
   <v-toolbar dark flat color="primary">
-    <v-avatar>
-      <img :src="require('../assets/logo.png')"/>
-    </v-avatar>
+    <router-link :to="{ name: 'home' }">
+      <v-avatar>
+        <img :src="require('../assets/logo.png')"/>
+      </v-avatar>
+    </router-link>
+    
     <v-spacer></v-spacer>
     <div v-if="!logged">
       <v-btn @click="loginForm = true" flat round>Login</v-btn>
